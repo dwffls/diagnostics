@@ -38,6 +38,12 @@ std::string formatValues(const std::vector<diagnostic_msgs::msg::KeyValue>& valu
 {
   std::string formatted;
   for (const auto& kv : values) {
+    if (kv.value.find("\n") != std::string::npos) {
+      // If the value contains a newline, skip it
+      // Telegraf uses this to separate measurements
+      continue;
+    }
+
     formatted += escapeSpace(kv.key) + "=" + escapeSpace(kv.value) + ",";
   }
   if (!formatted.empty()) {
@@ -52,7 +58,7 @@ std::pair<std::string, std::string> splitHardwareID(const std::string& input)
 
   // If no slash is found, treat the entire input as the node_name
   if (first_slash_pos == std::string::npos) {
-    return {"\"\"", input};
+    return {"none", input};
   }
 
   size_t second_slash_pos = input.find('/', first_slash_pos + 1);
@@ -78,8 +84,9 @@ void statusToInfluxLineProtocol(std::string& output, const diagnostic_msgs::msg:
 
   auto [ns, identifier] = splitHardwareID(status.hardware_id);
   output += identifier + ",ns=" + ns + " level=" + std::to_string(status.level) + ",message=\"" + status.message + "\"";
-  if (status.values.size()) {
-    output += "," + formatValues(status.values);
+  auto formatted_key_values = formatValues(status.values);
+  if (!formatted_key_values.empty()) {
+    output += "," + formatted_key_values;
   }
   output += " " + timestamp_str + "\n";
 }
