@@ -72,7 +72,7 @@ std::pair<std::string, std::string> splitHardwareID(const std::string& input)
 
   // If no second slash is found, everything after the first slash is the node
   std::string node = input.substr(first_slash_pos + 1);
-  return {"\"\"", node}; // ns is empty, node is the remaining string
+  return {"none", node}; // ns is empty, node is the remaining string
 }
 
 void statusToInfluxLineProtocol(std::string& output, const diagnostic_msgs::msg::DiagnosticStatus& status, const std::string& timestamp_str)
