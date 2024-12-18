@@ -3,7 +3,7 @@
 Telegraf::Telegraf()
     : Node("telegraf")
 {
-  telegraf_url_ = this->declare_parameter<std::string>("telegraf_url", "http://localhost:8186/telegraf");
+  telegraf_url_ = this->declare_parameter<std::string>("telegraf_url", "http://localhost:8086/api/v2/write");
 
   if (declare_parameter("send_agg", true)) {
     diag_sub_ = this->create_subscription<diagnostic_msgs::msg::DiagnosticArray>("/diagnostics_agg", rclcpp::SensorDataQoS(), std::bind(&Telegraf::diagnosticsCallback, this, std::placeholders::_1));
