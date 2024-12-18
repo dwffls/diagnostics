@@ -8,6 +8,7 @@ endif()
 set(dependencies
     ament_cmake
     rclcpp
+    rclcpp_components
     diagnostic_msgs
     CURL
     )
@@ -20,19 +21,27 @@ include_directories(
     src/
     include/
 )
-
-add_executable(telegraf
-                src/telegraf.cpp
+add_library(influx_component SHARED
+                src/influxdb.cpp
                 )
 
-ament_target_dependencies(telegraf ${dependencies})
+ament_target_dependencies(influx_component ${dependencies})
 
-ament_export_dependencies(telegraf ${dependencies})
+ament_export_dependencies(influx_component ${dependencies})
 
-target_compile_features(telegraf PUBLIC c_std_99 cxx_std_17)
+target_compile_features(influx_component PUBLIC c_std_99 cxx_std_17)
 
-install(TARGETS telegraf
-         DESTINATION lib/${PROJECT_NAME}
-         )
+rclcpp_components_register_node(
+    influx_component
+    PLUGIN "InfluxDB"
+    EXECUTABLE influx
+)
+ament_export_targets(export_influx_component)
+install(TARGETS influx_component
+        EXPORT export_influx_component
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
+)
 
 ament_package()

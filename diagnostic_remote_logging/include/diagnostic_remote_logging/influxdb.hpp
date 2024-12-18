@@ -41,17 +41,18 @@
 #include "rclcpp/rclcpp.hpp"
 #include <curl/curl.h>
 
-class Telegraf : public rclcpp::Node
+class InfluxDB : public rclcpp::Node
 {
 public:
-  Telegraf();
-  ~Telegraf();
+  explicit InfluxDB(const rclcpp::NodeOptions& opt);
+  ~InfluxDB();
 
 private:
   rclcpp::Subscription<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr  diag_sub_;
   rclcpp::Subscription<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr top_level_sub_;
 
-  std::string telegraf_url_;
+
+  std::string post_url_, influx_token_;
   CURL*       curl_;
 
   void setupConnection(const std::string& telegraf_url);
@@ -59,5 +60,5 @@ private:
   void diagnosticsCallback(const diagnostic_msgs::msg::DiagnosticArray::SharedPtr msg);
   void topLevelCallback(const diagnostic_msgs::msg::DiagnosticStatus::SharedPtr msg);
 
-  bool sendToTelegraf(const std::string& output);
+  bool sendToInfluxDB(const std::string& data);
 };
