@@ -73,6 +73,13 @@ std::string escapeSpace(const std::string& input)
   return result;
 }
 
+bool is_number(const std::string& s) {
+    std::istringstream iss(s);
+    double d;
+    return iss >> std::noskipws >> d && iss.eof();
+}
+
+
 std::string formatValues(const std::vector<diagnostic_msgs::msg::KeyValue>& values)
 {
   std::string formatted;
@@ -83,7 +90,16 @@ std::string formatValues(const std::vector<diagnostic_msgs::msg::KeyValue>& valu
       continue;
     }
 
-    formatted += escapeSpace(kv.key) + "=" + escapeSpace(kv.value) + ",";
+    formatted += escapeSpace(kv.key) + "=";
+
+    if (is_number(kv.value)) {
+      formatted += kv.value;
+    } else {
+      formatted += "\"" + kv.value + "\"";
+    }
+    formatted += ",";
+
+
   }
   if (!formatted.empty()) {
     formatted.pop_back(); // Remove the last comma
@@ -122,7 +138,7 @@ void statusToInfluxLineProtocol(std::string& output, const diagnostic_msgs::msg:
   }
 
   auto [ns, identifier] = splitHardwareID(status.hardware_id);
-  output += identifier + ",ns=" + ns + " level=" + std::to_string(status.level) + ",message=\"" + status.message + "\"";
+  output += escapeSpace(identifier) + ",ns=" + escapeSpace(ns) + " level=" + std::to_string(status.level) + ",message=\"" + status.message + "\"";
   auto formatted_key_values = formatValues(status.values);
   if (!formatted_key_values.empty()) {
     output += "," + formatted_key_values;
@@ -147,3 +163,4 @@ std::string arrayToInfluxLineProtocol(const diagnostic_msgs::msg::DiagnosticArra
 
   return output;
 };
+
