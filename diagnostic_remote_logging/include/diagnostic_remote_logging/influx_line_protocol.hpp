@@ -36,7 +36,6 @@
  * \author Daan Wijfels
  */
 
-
 #pragma once
 
 #include "diagnostic_msgs/msg/diagnostic_array.hpp"
@@ -44,20 +43,16 @@
 
 std::string toInfluxTimestamp(const rclcpp::Time& time)
 {
-  double timestamp = time.seconds();
-  // Extract the integer part (seconds)
-  uint64_t seconds = static_cast<uint64_t>(timestamp);
-  // Extract the fractional part (nanoseconds) by subtracting the integer part and scaling
-  uint64_t nanoseconds = static_cast<uint64_t>((timestamp - seconds) * 1e9);
+  uint64_t seconds     = static_cast<uint64_t>(time.seconds());
+  uint64_t nanoseconds = static_cast<uint64_t>(time.nanoseconds()) % 1000000000;
 
-  // Convert both parts to strings
+  // Convert to strings
   std::string secStr     = std::to_string(seconds);
   std::string nanosecStr = std::to_string(nanoseconds);
 
-  // Ensure the nanoseconds part is zero-padded to 9 digits
+  // Zero-pad nanoseconds to 9 digits
   nanosecStr = std::string(9 - nanosecStr.length(), '0') + nanosecStr;
 
-  // Concatenate and return the result
   return secStr + nanosecStr;
 }
 
@@ -73,12 +68,12 @@ std::string escapeSpace(const std::string& input)
   return result;
 }
 
-bool is_number(const std::string& s) {
-    std::istringstream iss(s);
-    double d;
-    return iss >> std::noskipws >> d && iss.eof();
+bool is_number(const std::string& s)
+{
+  std::istringstream iss(s);
+  double             d;
+  return iss >> std::noskipws >> d && iss.eof();
 }
-
 
 std::string formatValues(const std::vector<diagnostic_msgs::msg::KeyValue>& values)
 {
@@ -98,8 +93,6 @@ std::string formatValues(const std::vector<diagnostic_msgs::msg::KeyValue>& valu
       formatted += "\"" + kv.value + "\"";
     }
     formatted += ",";
-
-
   }
   if (!formatted.empty()) {
     formatted.pop_back(); // Remove the last comma
@@ -163,4 +156,3 @@ std::string arrayToInfluxLineProtocol(const diagnostic_msgs::msg::DiagnosticArra
 
   return output;
 };
-

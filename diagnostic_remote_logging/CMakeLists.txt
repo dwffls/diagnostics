@@ -10,6 +10,7 @@ set(dependencies
     rclcpp
     rclcpp_components
     diagnostic_msgs
+    ament_cmake_gtest
     CURL
     )
 
@@ -43,5 +44,13 @@ install(TARGETS influx_component
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin
 )
+
+if(BUILD_TESTING)
+  ament_add_gtest(unit_tests test/influx_line_protocol.cpp)
+  target_include_directories(unit_tests PRIVATE include)
+  target_link_libraries(unit_tests influx_component)
+  ament_target_dependencies(unit_tests ${dependencies})
+endif()
+
 
 ament_package()
