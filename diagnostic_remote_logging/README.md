@@ -39,6 +39,8 @@ The `influx` node supports several parameters. Below is an example configuration
 
 #### InfluxDB Configuration
 
+## Starting the Node
+
 Set the following parameters in your configuration to match your InfluxDB instance:
 
 - `connection.url`: The URL of your InfluxDB write API endpoint.
