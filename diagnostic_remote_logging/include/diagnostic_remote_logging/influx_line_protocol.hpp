@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2009, Willow Garage, Inc.
+ *  Copyright (c) 2025, Willow Garage, Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
  *********************************************************************/
 
 /**
- * \author Daan Wijfels
+ * \author Daan Wijffels
  */
 
 #pragma once

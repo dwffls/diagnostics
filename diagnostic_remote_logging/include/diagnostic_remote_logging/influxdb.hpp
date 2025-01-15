@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2009, Willow Garage, Inc.
+ *  Copyright (c) 2025, Willow Garage, Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@
  *********************************************************************/
 
 /**
- * \author Daan Wijfels
+ * \author Daan Wijffels
  */
 
 #include "diagnostic_msgs/msg/diagnostic_array.hpp"
@@ -50,7 +50,6 @@ public:
 private:
   rclcpp::Subscription<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr  diag_sub_;
   rclcpp::Subscription<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr top_level_sub_;
-
 
   std::string post_url_, influx_token_;
   CURL*       curl_;

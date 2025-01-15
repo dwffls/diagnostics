@@ -68,14 +68,14 @@ To configure Telegraf as a proxy for InfluxDB:
 
 3. Update the `influx` node configuration to point to the appropriate URL. For example, if Telegraf is running on the same host as the `influx` node, the default `http://localhost:8086/api/v2/write` should work.
 
-Leave the following parameters empty in the `influx` node configuration when using Telegraf as a proxy:
+4. Leave the following parameters empty in the `influx` node configuration when using Telegraf as a proxy:
 
-- `connection.token`
-- `connection.bucket`
-- `connection.organization`
+    - `connection.token`
+    - `connection.bucket`
+    - `connection.organization`
 
-Afterwards run the node with the following command:
+5. Afterwards run the node with the following command:
 
-```bash
-ros2 run diagnostic_remote_logging influx --ros-args --params-file <path_to_yaml_file>
-```
+    ```bash
+    ros2 run diagnostic_remote_logging influx --ros-args --params-file <path_to_yaml_file>
+    ```
