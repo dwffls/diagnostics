@@ -139,13 +139,13 @@ void statusToInfluxLineProtocol(std::string& output, const diagnostic_msgs::msg:
   output += " " + timestamp_str + "\n";
 }
 
-std::string topLevelToInfluxLineProtocol(const diagnostic_msgs::msg::DiagnosticStatus::SharedPtr& msg, const rclcpp::Time& time)
+std::string diagnosticStatusToInfluxLineProtocol(const diagnostic_msgs::msg::DiagnosticStatus::SharedPtr& msg, const rclcpp::Time& time)
 {
   std::string output = msg->name + " level=" + std::to_string(msg->level) + " " + toInfluxTimestamp(time) + "\n";
   return output;
 };
 
-std::string arrayToInfluxLineProtocol(const diagnostic_msgs::msg::DiagnosticArray::SharedPtr& diag_msg)
+std::string diagnosticArrayToInfluxLineProtocol(const diagnostic_msgs::msg::DiagnosticArray::SharedPtr& diag_msg)
 {
   std::string output;
   std::string timestamp = toInfluxTimestamp(diag_msg->header.stamp);

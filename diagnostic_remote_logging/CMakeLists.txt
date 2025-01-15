@@ -11,7 +11,7 @@ set(dependencies
     rclcpp_components
     diagnostic_msgs
     CURL
-    )
+)
 
 foreach(dep ${dependencies})
     find_package(${dep} REQUIRED)
@@ -21,9 +21,7 @@ include_directories(
     src/
     include/
 )
-add_library(influx_component SHARED
-                src/influxdb.cpp
-                )
+add_library(influx_component SHARED src/influxdb.cpp)
 
 ament_target_dependencies(influx_component ${dependencies})
 
@@ -51,6 +49,4 @@ if(BUILD_TESTING)
     target_link_libraries(unit_tests influx_component)
     ament_target_dependencies(unit_tests ${dependencies} ament_cmake_gtest)
 endif()
-
-
 ament_package()

@@ -50,7 +50,7 @@ void InfluxDB::diagnosticsCallback(const diagnostic_msgs::msg::DiagnosticArray::
     RCLCPP_ERROR(this->get_logger(), "Failed to send /diagnostics_agg to telegraf");
   }
 
-  // RCLCPP_INFO(this->get_logger(), "%s", output.c_str());
+  RCLCPP_DEBUG(this->get_logger(), "%s", output.c_str());
 }
 
 void InfluxDB::topLevelCallback(const diagnostic_msgs::msg::DiagnosticStatus::SharedPtr msg)
@@ -62,7 +62,7 @@ void InfluxDB::topLevelCallback(const diagnostic_msgs::msg::DiagnosticStatus::Sh
     RCLCPP_ERROR(this->get_logger(), "Failed to send /diagnostics_toplevel_state to telegraf");
   }
 
-  // RCLCPP_INFO(this->get_logger(), "%s", output.c_str());
+  RCLCPP_DEBUGRCLCPP_INFO(this->get_logger(), "%s", output.c_str());
 }
 
 void InfluxDB::setupConnection(const std::string &url)
