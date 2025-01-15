@@ -61,10 +61,10 @@ To configure Telegraf as a proxy for InfluxDB:
 1. Ensure Telegraf is set up to send data to your InfluxDB instance via its configuration file (`/etc/telegraf/telegraf.conf`). Check [this link](https://docs.influxdata.com/influxdb/cloud/write-data/no-code/use-telegraf/manual-config/) for an example.
 2. Add the following to the telegraf configuration file to enable the InfluxDB v2 listener:
 
-```toml
-[[inputs.influxdb_v2_listener]]
-  service_address = ":8086"
-```
+    ```toml
+    [[inputs.influxdb_v2_listener]]
+      service_address = ":8086"
+    ```
 
 3. Update the `influx` node configuration to point to the appropriate URL. For example, if Telegraf is running on the same host as the `influx` node, the default `http://localhost:8086/api/v2/write` should work.
 
