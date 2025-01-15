@@ -37,7 +37,7 @@ The `influx` node supports several parameters. Below is an example configuration
 - `send.agg`: Enables or disables subscription to the `/diagnostics_agg` topic.
 - `send.top_level_state`: Enables or disables subscription to the `/diagnostics_toplevel_state` topic.
 
-## InfluxDB Configuration
+#### InfluxDB Configuration
 
 Set the following parameters in your configuration to match your InfluxDB instance:
 
