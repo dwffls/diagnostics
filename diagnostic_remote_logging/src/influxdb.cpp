@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of the Willow Garage nor the names of its
+ *   * Neither the name of the copyright holder nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -39,9 +39,11 @@
 #include "diagnostic_remote_logging/influxdb.hpp"
 
 InfluxDB::InfluxDB(const rclcpp::NodeOptions& opt)
-    : Node("influxdb", opt)
+: Node("influxdb", opt)
 {
-  post_url_ = this->declare_parameter<std::string>("connection.url", "http://localhost:8086/api/v2/write");
+  post_url_ = this->declare_parameter<std::string>(
+    "connection.url", 
+    "http://localhost:8086/api/v2/write");
 
   if (post_url_.empty()) {
     throw std::runtime_error("Parameter connection.url must be set");
@@ -55,7 +57,8 @@ InfluxDB::InfluxDB(const rclcpp::NodeOptions& opt)
   if (!organization.empty() || !bucket.empty() || !influx_token_.empty()) {
     // Ensure all parameters are set
     if (organization.empty() || bucket.empty() || influx_token_.empty()) {
-      throw std::runtime_error("All parameters (connection.organization, connection.bucket, connection.token) must be set, or when using a proxy like Telegraf none have to be set.");
+      throw std::runtime_error("All parameters (connection.organization, connection.bucket, 
+        connection.token) must be set, or when using a proxy like Telegraf none have to be set.");
     }
 
     // Construct the Telegraf URL
@@ -66,11 +69,15 @@ InfluxDB::InfluxDB(const rclcpp::NodeOptions& opt)
   setupConnection(post_url_);
 
   if (declare_parameter("send.agg", true)) {
-    diag_sub_ = this->create_subscription<diagnostic_msgs::msg::DiagnosticArray>("/diagnostics_agg", rclcpp::SensorDataQoS(), std::bind(&InfluxDB::diagnosticsCallback, this, std::placeholders::_1));
+    diag_sub_ = this->create_subscription<diagnostic_msgs::msg::DiagnosticArray>(
+      "/diagnostics_agg", rclcpp::SensorDataQoS(), 
+      std::bind(&InfluxDB::diagnosticsCallback, this, std::placeholders::_1));
   }
 
   if (declare_parameter<bool>("send.top_level_state", true)) {
-    top_level_sub_ = this->create_subscription<diagnostic_msgs::msg::DiagnosticStatus>("/diagnostics_toplevel_state", rclcpp::SensorDataQoS(), std::bind(&InfluxDB::topLevelCallback, this, std::placeholders::_1));
+    top_level_sub_ = this->create_subscription<diagnostic_msgs::msg::DiagnosticStatus>(
+      "/diagnostics_toplevel_state", rclcpp::SensorDataQoS(), 
+      std::bind(&InfluxDB::topLevelCallback, this, std::placeholders::_1));
   }
 }
 
@@ -114,10 +121,10 @@ void InfluxDB::setupConnection(const std::string& url)
   headers = curl_slist_append(headers, "Accept: application/json");
 
   curl_easy_setopt(curl_, CURLOPT_URL, url.c_str());
-  curl_easy_setopt(curl_, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1); // Use HTTP/1.1 for keep-alive
+  curl_easy_setopt(curl_, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);  // For keep-alive
   curl_easy_setopt(curl_, CURLOPT_HTTPHEADER, headers);
-  curl_easy_setopt(curl_, CURLOPT_CONNECTTIMEOUT, 10L); // Set timeout as needed
-  curl_easy_setopt(curl_, CURLOPT_TCP_KEEPALIVE, 1L);   // Enable TCP keep-alive
+  curl_easy_setopt(curl_, CURLOPT_CONNECTTIMEOUT, 10L);  
+  curl_easy_setopt(curl_, CURLOPT_TCP_KEEPALIVE, 1L);
   curl_easy_setopt(curl_, CURLOPT_POST, 1L);
 }
 

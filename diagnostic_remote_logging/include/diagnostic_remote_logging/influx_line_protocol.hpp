@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of the Willow Garage nor the names of its
+ *   * Neither the name of the copyright holder nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -39,11 +39,11 @@
 #ifndef DIAGNOSTIC_REMOTE_LOGGING__INFLUX_LINE_PROTOCOL_HPP_
 #define DIAGNOSTIC_REMOTE_LOGGING__INFLUX_LINE_PROTOCOL_HPP_
 
-#include "diagnostic_msgs/msg/diagnostic_array.hpp"
-#include "rclcpp/rclcpp.hpp"
 #include <string>
 #include <utility>
 #include <vector>
+#include "rclcpp/rclcpp.hpp"
+#include "diagnostic_msgs/msg/diagnostic_array.hpp"
 
 std::string toInfluxTimestamp(const rclcpp::Time& time)
 {
@@ -65,9 +65,9 @@ std::string escapeSpace(const std::string& input)
   std::string result;
   for (char c : input) {
     if (c == ' ') {
-      result += '\\'; // Add a backslash before the space
+      result += '\\';  // Add a backslash before the space
     }
-    result += c; // Add the original character
+    result += c;  // Add the original character
   }
   return result;
 }
@@ -82,7 +82,7 @@ bool is_number(const std::string& s)
 std::string formatValues(const std::vector<diagnostic_msgs::msg::KeyValue>& values)
 {
   std::string formatted;
-  for (const auto& kv : values) {
+  for (const auto & kv : values) {
     if (kv.value.find("\n") != std::string::npos) {
       // If the value contains a newline, skip it
       // InfluxDB uses this to separate measurements
@@ -99,7 +99,7 @@ std::string formatValues(const std::vector<diagnostic_msgs::msg::KeyValue>& valu
     formatted += ",";
   }
   if (!formatted.empty()) {
-    formatted.pop_back(); // Remove the last comma
+    formatted.pop_back();  // Remove the last comma
   }
   return formatted;
 }
@@ -124,7 +124,7 @@ std::pair<std::string, std::string> splitHardwareID(const std::string& input)
 
   // If no second slash is found, everything after the first slash is the node
   std::string node = input.substr(first_slash_pos + 1);
-  return {"none", node}; // ns is empty, node is the remaining string
+  return {"none", node};  // ns is empty, node is the remaining string
 }
 
 void statusToInfluxLineProtocol(
@@ -161,11 +161,11 @@ std::string diagnosticArrayToInfluxLineProtocol(
   std::string output;
   std::string timestamp = toInfluxTimestamp(diag_msg->header.stamp);
 
-  for (auto& status : diag_msg->status) {
+  for (auto & status : diag_msg->status) {
     statusToInfluxLineProtocol(output, status, timestamp);
   }
 
   return output;
 };
 
-#endif
+#endif  //DIAGNOSTIC_REMOTE_LOGGING__INFLUX_LINE_PROTOCOL_HPP_

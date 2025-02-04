@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of the Willow Garage nor the names of its
+ *   * Neither the name of the copyright holder nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -39,13 +39,11 @@
 #include "diagnostic_remote_logging/influx_line_protocol.hpp"
 
 #include <gtest/gtest.h>
-#include <rclcpp/rclcpp.hpp>
 
+#include <rclcpp/rclcpp.hpp>
 #include "diagnostic_msgs/msg/diagnostic_array.hpp"
 #include "diagnostic_msgs/msg/diagnostic_status.hpp"
 #include "diagnostic_msgs/msg/key_value.hpp"
-
-// Include the functions to test
 
 diagnostic_msgs::msg::KeyValue createKeyValue(const std::string& key, const std::string& value)
 {
@@ -58,7 +56,7 @@ diagnostic_msgs::msg::KeyValue createKeyValue(const std::string& key, const std:
 // Test toInfluxTimestamp
 TEST(InfluxTimestampTests, CorrectConversion)
 {
-  rclcpp::Time time(1672531200, 123456789); // Example time
+  rclcpp::Time time(1672531200, 123456789);
   std::string  expected = "1672531200123456789";
   EXPECT_EQ(toInfluxTimestamp(time), expected);
 }
@@ -119,8 +117,8 @@ TEST(StatusToInfluxLineProtocolTests, FormatsCorrectly)
   status.values.push_back(createKeyValue("key1", "value1"));
   status.values.push_back(createKeyValue("key2", "42"));
 
-  std::string expected = "node_name,ns=ns level=2,message=\"Test message\",key1=\"value1\",key2=42 "
-                         "1672531200123456789\n";
+  std::string expected = "node_name,ns=ns level=2,message=\"Test message\",key1=\"value1\",key2=42"
+                         " 1672531200123456789\n";
   std::string output;
   statusToInfluxLineProtocol(output, status, "1672531200123456789");
 

@@ -14,7 +14,7 @@
  *     copyright notice, this list of conditions and the following
  *     disclaimer in the documentation and/or other materials provided
  *     with the distribution.
- *   * Neither the name of the Willow Garage nor the names of its
+ *   * Neither the name of the copyright holder nor the names of its
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -39,11 +39,13 @@
 #ifndef DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_
 #define DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_
 
-#include "diagnostic_msgs/msg/diagnostic_array.hpp"
 #include "diagnostic_remote_logging/influx_line_protocol.hpp"
-#include "rclcpp/rclcpp.hpp"
-#include <curl/curl.h>
+
 #include <string>
+#include <curl/curl.h>
+
+#include "rclcpp/rclcpp.hpp"
+#include "diagnostic_msgs/msg/diagnostic_array.hpp"
 
 class InfluxDB : public rclcpp::Node
 {
@@ -66,4 +68,4 @@ private:
   bool sendToInfluxDB(const std::string& data);
 };
 
-#endif // DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_
+#endif  // DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_
