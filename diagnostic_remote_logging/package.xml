@@ -5,7 +5,7 @@
   <version>4.3.1</version>
   <description>diagnostic_remote_logging</description>
   <maintainer email="dwijffels@lely.com">Daan Wijffels</maintainer>
-  <license>>BSD-3-Clause</license>
+  <license>BSD-3-Clause</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
