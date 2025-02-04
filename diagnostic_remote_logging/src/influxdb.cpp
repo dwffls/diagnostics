@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2025, Willow Garage, Inc.
+ *  Copyright (c) 2025, Daan Wijffels
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -138,7 +138,7 @@ bool InfluxDB::sendToInfluxDB(const std::string& data)
     RCLCPP_ERROR(this->get_logger(), "cURL error: %s", curl_easy_strerror(res));
     return false;
   }
-  long response_code;
+  CURLcode response_code;
   curl_easy_getinfo(curl_, CURLINFO_RESPONSE_CODE, &response_code);
 
   if (response_code != 204) {

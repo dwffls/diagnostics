@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2025, Willow Garage, Inc.
+ *  Copyright (c) 2025, Daan Wijffels
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -36,14 +36,16 @@
  * \author Daan Wijffels
  */
 
-#include "diagnostic_msgs/msg/diagnostic_array.hpp"
-#include "diagnostic_msgs/msg/diagnostic_status.hpp"
-#include "diagnostic_msgs/msg/key_value.hpp"
+#include "diagnostic_remote_logging/influx_line_protocol.hpp"
+
 #include <gtest/gtest.h>
 #include <rclcpp/rclcpp.hpp>
 
+#include "diagnostic_msgs/msg/diagnostic_array.hpp"
+#include "diagnostic_msgs/msg/diagnostic_status.hpp"
+#include "diagnostic_msgs/msg/key_value.hpp"
+
 // Include the functions to test
-#include "diagnostic_remote_logging/influx_line_protocol.hpp"
 
 diagnostic_msgs::msg::KeyValue createKeyValue(const std::string& key, const std::string& value)
 {
@@ -89,16 +91,22 @@ TEST(FormatValuesTests, FormatsKeyValuePairs)
   values.push_back(createKeyValue("key3", "-3.14"));
   values.push_back(createKeyValue("key with spaces", "value with spaces"));
 
-  std::string expected = "key1=\"value\",key2=42,key3=-3.14,key\\ with\\ spaces=\"value with spaces\"";
+  std::string expected =
+      "key1=\"value\",key2=42,key3=-3.14,key\\ with\\ spaces=\"value with spaces\"";
   EXPECT_EQ(formatValues(values), expected);
 }
 
 // Test splitHardwareID
 TEST(SplitHardwareIDTests, SplitsCorrectly)
 {
-  EXPECT_EQ(splitHardwareID("node_name"), std::make_pair(std::string("none"), std::string("node_name")));
-  EXPECT_EQ(splitHardwareID("/ns/node_name"), std::make_pair(std::string("ns"), std::string("node_name")));
-  EXPECT_EQ(splitHardwareID("/ns/prefix/node_name"), std::make_pair(std::string("ns"), std::string("prefix/node_name")));
+  EXPECT_EQ(
+      splitHardwareID("node_name"), std::make_pair(std::string("none"), std::string("node_name")));
+  EXPECT_EQ(
+      splitHardwareID("/ns/node_name"),
+      std::make_pair(std::string("ns"), std::string("node_name")));
+  EXPECT_EQ(
+      splitHardwareID("/ns/prefix/node_name"),
+      std::make_pair(std::string("ns"), std::string("prefix/node_name")));
 }
 
 // Test statusToInfluxLineProtocol
@@ -111,7 +119,8 @@ TEST(StatusToInfluxLineProtocolTests, FormatsCorrectly)
   status.values.push_back(createKeyValue("key1", "value1"));
   status.values.push_back(createKeyValue("key2", "42"));
 
-  std::string expected = "node_name,ns=ns level=2,message=\"Test message\",key1=\"value1\",key2=42 1672531200123456789\n";
+  std::string expected = "node_name,ns=ns level=2,message=\"Test message\",key1=\"value1\",key2=42 "
+                         "1672531200123456789\n";
   std::string output;
   statusToInfluxLineProtocol(output, status, "1672531200123456789");
 
@@ -138,19 +147,21 @@ TEST(DiagnosticArrayToInfluxLineProtocolTests, HandlesMultipleStatuses)
 
   diag_msg->status = {status1, status2};
 
-  std::string expected = "node1,ns=ns1 level=1,message=\"First status\",keyA=\"valueA\" 1672531200123456789\n"
-                         "node2,ns=none level=2,message=\"Second status\",keyB=42 1672531200123456789\n";
+  std::string expected =
+      "node1,ns=ns1 level=1,message=\"First status\",keyA=\"valueA\" 1672531200123456789\n"
+      "node2,ns=none level=2,message=\"Second status\",keyB=42 1672531200123456789\n";
 
   EXPECT_EQ(diagnosticArrayToInfluxLineProtocol(diag_msg), expected);
 }
 
 // Test diagnosticStatusToInfluxLineProtocol
-TEST(DiagnosticStatusToInfluxLineProtocol, HandlesSingleStatus){
-  auto status = std::make_shared<diagnostic_msgs::msg::DiagnosticStatus>();
-  status->level       = 1;
-  status->name = "toplevel_state";
-  auto time = rclcpp::Time(1672531200, 123456789);
-  
+TEST(DiagnosticStatusToInfluxLineProtocol, HandlesSingleStatus)
+{
+  auto status   = std::make_shared<diagnostic_msgs::msg::DiagnosticStatus>();
+  status->level = 1;
+  status->name  = "toplevel_state";
+  auto time     = rclcpp::Time(1672531200, 123456789);
+
   std::string expected = "toplevel_state level=1 1672531200123456789\n";
   EXPECT_EQ(diagnosticStatusToInfluxLineProtocol(status, time), expected);
 }

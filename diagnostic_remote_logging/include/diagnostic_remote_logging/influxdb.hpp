@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2025, Willow Garage, Inc.
+ *  Copyright (c) 2025, Daan Wijffels
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -36,10 +36,14 @@
  * \author Daan Wijffels
  */
 
+#ifndef DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_
+#define DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_
+
 #include "diagnostic_msgs/msg/diagnostic_array.hpp"
 #include "diagnostic_remote_logging/influx_line_protocol.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include <curl/curl.h>
+#include <string>
 
 class InfluxDB : public rclcpp::Node
 {
@@ -61,3 +65,5 @@ private:
 
   bool sendToInfluxDB(const std::string& data);
 };
+
+#endif // DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_

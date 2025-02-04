@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2025, Willow Garage, Inc.
+ *  Copyright (c) 2025, Daan Wijffels
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -36,10 +36,14 @@
  * \author Daan Wijffels
  */
 
-#pragma once
+#ifndef DIAGNOSTIC_REMOTE_LOGGING__INFLUX_LINE_PROTOCOL_HPP_
+#define DIAGNOSTIC_REMOTE_LOGGING__INFLUX_LINE_PROTOCOL_HPP_
 
 #include "diagnostic_msgs/msg/diagnostic_array.hpp"
 #include "rclcpp/rclcpp.hpp"
+#include <string>
+#include <utility>
+#include <vector>
 
 std::string toInfluxTimestamp(const rclcpp::Time& time)
 {
@@ -123,7 +127,10 @@ std::pair<std::string, std::string> splitHardwareID(const std::string& input)
   return {"none", node}; // ns is empty, node is the remaining string
 }
 
-void statusToInfluxLineProtocol(std::string& output, const diagnostic_msgs::msg::DiagnosticStatus& status, const std::string& timestamp_str)
+void statusToInfluxLineProtocol(
+    std::string&                                  output,
+    const diagnostic_msgs::msg::DiagnosticStatus& status,
+    const std::string&                            timestamp_str)
 {
   // hardware_id is empty for analyzer groups, so skip them
   if (status.hardware_id.empty()) {
@@ -131,7 +138,8 @@ void statusToInfluxLineProtocol(std::string& output, const diagnostic_msgs::msg:
   }
 
   auto [ns, identifier] = splitHardwareID(status.hardware_id);
-  output += escapeSpace(identifier) + ",ns=" + escapeSpace(ns) + " level=" + std::to_string(status.level) + ",message=\"" + status.message + "\"";
+  output += escapeSpace(identifier) + ",ns=" + escapeSpace(ns) +
+            " level=" + std::to_string(status.level) + ",message=\"" + status.message + "\"";
   auto formatted_key_values = formatValues(status.values);
   if (!formatted_key_values.empty()) {
     output += "," + formatted_key_values;
@@ -139,13 +147,16 @@ void statusToInfluxLineProtocol(std::string& output, const diagnostic_msgs::msg:
   output += " " + timestamp_str + "\n";
 }
 
-std::string diagnosticStatusToInfluxLineProtocol(const diagnostic_msgs::msg::DiagnosticStatus::SharedPtr& msg, const rclcpp::Time& time)
+std::string diagnosticStatusToInfluxLineProtocol(
+    const diagnostic_msgs::msg::DiagnosticStatus::SharedPtr& msg, const rclcpp::Time& time)
 {
-  std::string output = msg->name + " level=" + std::to_string(msg->level) + " " + toInfluxTimestamp(time) + "\n";
+  std::string output =
+      msg->name + " level=" + std::to_string(msg->level) + " " + toInfluxTimestamp(time) + "\n";
   return output;
 };
 
-std::string diagnosticArrayToInfluxLineProtocol(const diagnostic_msgs::msg::DiagnosticArray::SharedPtr& diag_msg)
+std::string diagnosticArrayToInfluxLineProtocol(
+    const diagnostic_msgs::msg::DiagnosticArray::SharedPtr& diag_msg)
 {
   std::string output;
   std::string timestamp = toInfluxTimestamp(diag_msg->header.stamp);
@@ -156,3 +167,5 @@ std::string diagnosticArrayToInfluxLineProtocol(const diagnostic_msgs::msg::Diag
 
   return output;
 };
+
+#endif
