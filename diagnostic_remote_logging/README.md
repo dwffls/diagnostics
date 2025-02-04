@@ -4,7 +4,7 @@ General information about this repository, including legal information and known
 
 This package provides the `influx` node, which listens to diagnostic messages and integrates with InfluxDB v2 for monitoring and visualization. Specifically, it subscribes to the [`diagnostic_msgs/DiagnosticArray`](https://index.ros.org/p/diagnostic_msgs) messages on the `/diagnostics_agg` topic and the [`diagnostic_msgs/DiagnosticStatus`](https://index.ros.org/p/diagnostic_msgs) messages on the `/diagnostics_toplevel_state` topic. The node processes these messages, sending their statistics and levels to an [`InfluxDB`](http://influxdb.com) database, enabling use with tools like [`Grafana`](https://grafana.com).
 
-As of now we only support InfluxDB v2, for support with older versions please use a proxy like [`Telegraf`](https://www.influxdata.com/time-series-platform/telegraf/). See section [Telegraf](## Using a Telegraf Proxy) for an example on how to setup.
+As of now we only support InfluxDB v2, for support with older versions please use a proxy like [`Telegraf`](https://www.influxdata.com/time-series-platform/telegraf/). See section [Telegraf](#using-a-telegraf-proxy) for an example on how to setup.
 
 ## Node Configuration
 
@@ -39,8 +39,6 @@ The `influx` node supports several parameters. Below is an example configuration
 
 #### InfluxDB Configuration
 
-## Starting the Node
-
 Set the following parameters in your configuration to match your InfluxDB instance:
 
 - `connection.url`: The URL of your InfluxDB write API endpoint.
@@ -48,7 +46,9 @@ Set the following parameters in your configuration to match your InfluxDB instan
 - `connection.bucket`: The target bucket in InfluxDB.
 - `connection.organization`: The name of your InfluxDB organization.
 
-Afterwards run the node with the following command:
+### Starting the node
+
+Afterward all configurations are set run the node with the following command:
 
 ```bash
 ros2 run diagnostic_remote_logging influx --ros-args --params-file <path_to_yaml_file>
