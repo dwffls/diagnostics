@@ -42,6 +42,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+
 #include "rclcpp/rclcpp.hpp"
 #include "diagnostic_msgs/msg/diagnostic_array.hpp"
 
@@ -168,4 +169,4 @@ std::string diagnosticArrayToInfluxLineProtocol(
   return output;
 };
 
-#endif  //DIAGNOSTIC_REMOTE_LOGGING__INFLUX_LINE_PROTOCOL_HPP_
+#endif //DIAGNOSTIC_REMOTE_LOGGING__INFLUX_LINE_PROTOCOL_HPP_

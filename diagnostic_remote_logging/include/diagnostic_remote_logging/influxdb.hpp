@@ -39,13 +39,13 @@
 #ifndef DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_
 #define DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_
 
-#include "diagnostic_remote_logging/influx_line_protocol.hpp"
-
 #include <string>
 #include <curl/curl.h>
 
 #include "rclcpp/rclcpp.hpp"
 #include "diagnostic_msgs/msg/diagnostic_array.hpp"
+
+#include "diagnostic_remote_logging/influx_line_protocol.hpp"
 
 class InfluxDB : public rclcpp::Node
 {
