@@ -169,4 +169,4 @@ std::string diagnosticArrayToInfluxLineProtocol(
   return output;
 };
 
-#endif //DIAGNOSTIC_REMOTE_LOGGING__INFLUX_LINE_PROTOCOL_HPP_
+#endif  // DIAGNOSTIC_REMOTE_LOGGING__INFLUX_LINE_PROTOCOL_HPP_
