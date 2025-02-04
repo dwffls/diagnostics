@@ -46,13 +46,13 @@
 #include "rclcpp/rclcpp.hpp"
 #include "diagnostic_msgs/msg/diagnostic_array.hpp"
 
-std::string toInfluxTimestamp(const rclcpp::Time& time)
+std::string toInfluxTimestamp(const rclcpp::Time & time)
 {
-  uint64_t seconds     = static_cast<uint64_t>(time.seconds());
+  uint64_t seconds = static_cast<uint64_t>(time.seconds());
   uint64_t nanoseconds = static_cast<uint64_t>(time.nanoseconds()) % 1000000000;
 
   // Convert to strings
-  std::string secStr     = std::to_string(seconds);
+  std::string secStr = std::to_string(seconds);
   std::string nanosecStr = std::to_string(nanoseconds);
 
   // Zero-pad nanoseconds to 9 digits
@@ -61,7 +61,7 @@ std::string toInfluxTimestamp(const rclcpp::Time& time)
   return secStr + nanosecStr;
 }
 
-std::string escapeSpace(const std::string& input)
+std::string escapeSpace(const std::string & input)
 {
   std::string result;
   for (char c : input) {
@@ -73,14 +73,14 @@ std::string escapeSpace(const std::string& input)
   return result;
 }
 
-bool is_number(const std::string& s)
+bool is_number(const std::string & s)
 {
   std::istringstream iss(s);
-  double             d;
+  double d;
   return iss >> std::noskipws >> d && iss.eof();
 }
 
-std::string formatValues(const std::vector<diagnostic_msgs::msg::KeyValue>& values)
+std::string formatValues(const std::vector<diagnostic_msgs::msg::KeyValue> & values)
 {
   std::string formatted;
   for (const auto & kv : values) {
@@ -105,7 +105,7 @@ std::string formatValues(const std::vector<diagnostic_msgs::msg::KeyValue>& valu
   return formatted;
 }
 
-std::pair<std::string, std::string> splitHardwareID(const std::string& input)
+std::pair<std::string, std::string> splitHardwareID(const std::string & input)
 {
   size_t first_slash_pos = input.find('/');
 
@@ -118,20 +118,20 @@ std::pair<std::string, std::string> splitHardwareID(const std::string& input)
 
   // If the second slash is found, extract the "ns" and "node" parts
   if (second_slash_pos != std::string::npos) {
-    std::string ns   = input.substr(first_slash_pos + 1, second_slash_pos - first_slash_pos - 1);
+    std::string ns = input.substr(first_slash_pos + 1, second_slash_pos - first_slash_pos - 1);
     std::string node = input.substr(second_slash_pos + 1);
     return {ns, node};
   }
 
   // If no second slash is found, everything after the first slash is the node
   std::string node = input.substr(first_slash_pos + 1);
-  return {"none", node};  // ns is empty, node is the remaining string
+  return {"none", node};    // ns is empty, node is the remaining string
 }
 
 void statusToInfluxLineProtocol(
-    std::string&                                  output,
-    const diagnostic_msgs::msg::DiagnosticStatus& status,
-    const std::string&                            timestamp_str)
+  std::string & output,
+  const diagnostic_msgs::msg::DiagnosticStatus & status,
+  const std::string & timestamp_str)
 {
   // hardware_id is empty for analyzer groups, so skip them
   if (status.hardware_id.empty()) {
@@ -140,7 +140,7 @@ void statusToInfluxLineProtocol(
 
   auto [ns, identifier] = splitHardwareID(status.hardware_id);
   output += escapeSpace(identifier) + ",ns=" + escapeSpace(ns) +
-            " level=" + std::to_string(status.level) + ",message=\"" + status.message + "\"";
+    " level=" + std::to_string(status.level) + ",message=\"" + status.message + "\"";
   auto formatted_key_values = formatValues(status.values);
   if (!formatted_key_values.empty()) {
     output += "," + formatted_key_values;
@@ -149,15 +149,15 @@ void statusToInfluxLineProtocol(
 }
 
 std::string diagnosticStatusToInfluxLineProtocol(
-    const diagnostic_msgs::msg::DiagnosticStatus::SharedPtr& msg, const rclcpp::Time& time)
+  const diagnostic_msgs::msg::DiagnosticStatus::SharedPtr & msg, const rclcpp::Time & time)
 {
   std::string output =
-      msg->name + " level=" + std::to_string(msg->level) + " " + toInfluxTimestamp(time) + "\n";
+    msg->name + " level=" + std::to_string(msg->level) + " " + toInfluxTimestamp(time) + "\n";
   return output;
-};
+}
 
 std::string diagnosticArrayToInfluxLineProtocol(
-    const diagnostic_msgs::msg::DiagnosticArray::SharedPtr& diag_msg)
+  const diagnostic_msgs::msg::DiagnosticArray::SharedPtr & diag_msg)
 {
   std::string output;
   std::string timestamp = toInfluxTimestamp(diag_msg->header.stamp);
@@ -167,6 +167,6 @@ std::string diagnosticArrayToInfluxLineProtocol(
   }
 
   return output;
-};
+}
 
 #endif  // DIAGNOSTIC_REMOTE_LOGGING__INFLUX_LINE_PROTOCOL_HPP_

@@ -38,28 +38,27 @@
 
 #include "diagnostic_remote_logging/influxdb.hpp"
 
-InfluxDB::InfluxDB(const rclcpp::NodeOptions& opt)
+InfluxDB::InfluxDB(const rclcpp::NodeOptions & opt)
 : Node("influxdb", opt)
 {
-  post_url_ = this->declare_parameter<std::string>(
-    "connection.url",
-    "http://localhost:8086/api/v2/write");
+  post_url_ =
+    this->declare_parameter<std::string>("connection.url", "http://localhost:8086/api/v2/write");
 
   if (post_url_.empty()) {
     throw std::runtime_error("Parameter connection.url must be set");
   }
 
   std::string organization = declare_parameter("connection.organization", "");
-  std::string bucket       = declare_parameter("connection.bucket", "");
-  influx_token_            = declare_parameter("connection.token", "");
+  std::string bucket = declare_parameter("connection.bucket", "");
+  influx_token_ = declare_parameter("connection.token", "");
 
   // Check if any of the parameters is set
   if (!organization.empty() || !bucket.empty() || !influx_token_.empty()) {
     // Ensure all parameters are set
     if (organization.empty() || bucket.empty() || influx_token_.empty()) {
       throw std::runtime_error(
-        "All parameters (connection.organization, connection.bucket, connection.token) "
-        "must be set, or when using a proxy like Telegraf none have to be set.");
+          "All parameters (connection.organization, connection.bucket, connection.token) "
+          "must be set, or when using a proxy like Telegraf none have to be set.");
     }
 
     // Construct the Telegraf URL
@@ -71,14 +70,14 @@ InfluxDB::InfluxDB(const rclcpp::NodeOptions& opt)
 
   if (declare_parameter("send.agg", true)) {
     diag_sub_ = this->create_subscription<diagnostic_msgs::msg::DiagnosticArray>(
-      "/diagnostics_agg", rclcpp::SensorDataQoS(),
-      std::bind(&InfluxDB::diagnosticsCallback, this, std::placeholders::_1));
+        "/diagnostics_agg", rclcpp::SensorDataQoS(),
+        std::bind(&InfluxDB::diagnosticsCallback, this, std::placeholders::_1));
   }
 
   if (declare_parameter<bool>("send.top_level_state", true)) {
     top_level_sub_ = this->create_subscription<diagnostic_msgs::msg::DiagnosticStatus>(
-      "/diagnostics_toplevel_state", rclcpp::SensorDataQoS(),
-      std::bind(&InfluxDB::topLevelCallback, this, std::placeholders::_1));
+        "/diagnostics_toplevel_state", rclcpp::SensorDataQoS(),
+        std::bind(&InfluxDB::topLevelCallback, this, std::placeholders::_1));
   }
 }
 
@@ -104,7 +103,7 @@ void InfluxDB::topLevelCallback(const diagnostic_msgs::msg::DiagnosticStatus::Sh
   RCLCPP_DEBUG(this->get_logger(), "%s", output.c_str());
 }
 
-void InfluxDB::setupConnection(const std::string& url)
+void InfluxDB::setupConnection(const std::string & url)
 {
   curl_global_init(CURL_GLOBAL_ALL);
   curl_ = curl_easy_init();
@@ -112,7 +111,7 @@ void InfluxDB::setupConnection(const std::string& url)
     throw std::runtime_error("Failed to initialize curl");
   }
 
-  struct curl_slist* headers = nullptr;
+  struct curl_slist * headers = nullptr;
 
   if (!influx_token_.empty()) {
     headers = curl_slist_append(headers, ("Authorization: Token " + influx_token_).c_str());
@@ -129,7 +128,7 @@ void InfluxDB::setupConnection(const std::string& url)
   curl_easy_setopt(curl_, CURLOPT_POST, 1L);
 }
 
-bool InfluxDB::sendToInfluxDB(const std::string& data)
+bool InfluxDB::sendToInfluxDB(const std::string & data)
 {
   if (!curl_) {
     RCLCPP_ERROR(this->get_logger(), "cURL not initialized.");
@@ -150,11 +149,8 @@ bool InfluxDB::sendToInfluxDB(const std::string& data)
   curl_easy_getinfo(curl_, CURLINFO_RESPONSE_CODE, &response_code);
 
   if (response_code != 204) {
-    RCLCPP_ERROR(
-        this->get_logger(),
-        "Error (%d) when sending to telegraf:\n%s",
-        response_code,
-        data.c_str());
+    RCLCPP_ERROR(this->get_logger(), "Error (%d) when sending to telegraf:\n%s", response_code,
+                 data.c_str());
     return false;
   }
 

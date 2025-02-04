@@ -40,15 +40,15 @@
 
 #include <gtest/gtest.h>
 
-#include <rclcpp/rclcpp.hpp>
 #include "diagnostic_msgs/msg/diagnostic_array.hpp"
 #include "diagnostic_msgs/msg/diagnostic_status.hpp"
 #include "diagnostic_msgs/msg/key_value.hpp"
+#include <rclcpp/rclcpp.hpp>
 
-diagnostic_msgs::msg::KeyValue createKeyValue(const std::string& key, const std::string& value)
+diagnostic_msgs::msg::KeyValue createKeyValue(const std::string & key, const std::string & value)
 {
   diagnostic_msgs::msg::KeyValue output;
-  output.key   = key;
+  output.key = key;
   output.value = value;
   return output;
 }
@@ -57,7 +57,7 @@ diagnostic_msgs::msg::KeyValue createKeyValue(const std::string& key, const std:
 TEST(InfluxTimestampTests, CorrectConversion)
 {
   rclcpp::Time time(1672531200, 123456789);
-  std::string  expected = "1672531200123456789";
+  std::string expected = "1672531200123456789";
   EXPECT_EQ(toInfluxTimestamp(time), expected);
 }
 
@@ -90,21 +90,22 @@ TEST(FormatValuesTests, FormatsKeyValuePairs)
   values.push_back(createKeyValue("key with spaces", "value with spaces"));
 
   std::string expected =
-      "key1=\"value\",key2=42,key3=-3.14,key\\ with\\ spaces=\"value with spaces\"";
+    "key1=\"value\",key2=42,key3=-3.14,key\\ with\\ "
+    "spaces=\"value with spaces\"";
   EXPECT_EQ(formatValues(values), expected);
 }
 
 // Test splitHardwareID
 TEST(SplitHardwareIDTests, SplitsCorrectly)
 {
-  EXPECT_EQ(
-      splitHardwareID("node_name"), std::make_pair(std::string("none"), std::string("node_name")));
-  EXPECT_EQ(
-      splitHardwareID("/ns/node_name"),
-      std::make_pair(std::string("ns"), std::string("node_name")));
-  EXPECT_EQ(
-      splitHardwareID("/ns/prefix/node_name"),
-      std::make_pair(std::string("ns"), std::string("prefix/node_name")));
+  EXPECT_EQ(splitHardwareID("node_name"), std::make_pair(std::string("none"), std::string("node_"
+                                                                                          "name")));
+  EXPECT_EQ(splitHardwareID("/ns/node_name"), std::make_pair(std::string("ns"), std::string("node_"
+                                                                                            "nam"
+                                                                                            "e")));
+  EXPECT_EQ(splitHardwareID("/ns/prefix/node_name"),
+            std::make_pair(std::string("ns"), std::string("prefix/"
+                                                          "node_name")));
 }
 
 // Test statusToInfluxLineProtocol
@@ -112,13 +113,14 @@ TEST(StatusToInfluxLineProtocolTests, FormatsCorrectly)
 {
   diagnostic_msgs::msg::DiagnosticStatus status;
   status.hardware_id = "/ns/node_name";
-  status.level       = 2;
-  status.message     = "Test message";
+  status.level = 2;
+  status.message = "Test message";
   status.values.push_back(createKeyValue("key1", "value1"));
   status.values.push_back(createKeyValue("key2", "42"));
 
-  std::string expected = "node_name,ns=ns level=2,message=\"Test message\",key1=\"value1\",key2=42"
-                         " 1672531200123456789\n";
+  std::string expected =
+    "node_name,ns=ns level=2,message=\"Test message\",key1=\"value1\",key2=42"
+    " 1672531200123456789\n";
   std::string output;
   statusToInfluxLineProtocol(output, status, "1672531200123456789");
 
@@ -128,26 +130,28 @@ TEST(StatusToInfluxLineProtocolTests, FormatsCorrectly)
 // Test diagnosticArrayToInfluxLineProtocol
 TEST(DiagnosticArrayToInfluxLineProtocolTests, HandlesMultipleStatuses)
 {
-  auto diag_msg          = std::make_shared<diagnostic_msgs::msg::DiagnosticArray>();
+  auto diag_msg = std::make_shared<diagnostic_msgs::msg::DiagnosticArray>();
   diag_msg->header.stamp = rclcpp::Time(1672531200, 123456789);
 
   diagnostic_msgs::msg::DiagnosticStatus status1;
   status1.hardware_id = "/ns1/node1";
-  status1.level       = 1;
-  status1.message     = "First status";
+  status1.level = 1;
+  status1.message = "First status";
   status1.values.push_back(createKeyValue("keyA", "valueA"));
 
   diagnostic_msgs::msg::DiagnosticStatus status2;
   status2.hardware_id = "node2";
-  status2.level       = 2;
-  status2.message     = "Second status";
+  status2.level = 2;
+  status2.message = "Second status";
   status2.values.push_back(createKeyValue("keyB", "42"));
 
   diag_msg->status = {status1, status2};
 
   std::string expected =
-      "node1,ns=ns1 level=1,message=\"First status\",keyA=\"valueA\" 1672531200123456789\n"
-      "node2,ns=none level=2,message=\"Second status\",keyB=42 1672531200123456789\n";
+    "node1,ns=ns1 level=1,message=\"First "
+    "status\",keyA=\"valueA\" 1672531200123456789\n"
+    "node2,ns=none level=2,message=\"Second "
+    "status\",keyB=42 1672531200123456789\n";
 
   EXPECT_EQ(diagnosticArrayToInfluxLineProtocol(diag_msg), expected);
 }
@@ -155,10 +159,10 @@ TEST(DiagnosticArrayToInfluxLineProtocolTests, HandlesMultipleStatuses)
 // Test diagnosticStatusToInfluxLineProtocol
 TEST(DiagnosticStatusToInfluxLineProtocol, HandlesSingleStatus)
 {
-  auto status   = std::make_shared<diagnostic_msgs::msg::DiagnosticStatus>();
+  auto status = std::make_shared<diagnostic_msgs::msg::DiagnosticStatus>();
   status->level = 1;
-  status->name  = "toplevel_state";
-  auto time     = rclcpp::Time(1672531200, 123456789);
+  status->name = "toplevel_state";
+  auto time = rclcpp::Time(1672531200, 123456789);
 
   std::string expected = "toplevel_state level=1 1672531200123456789\n";
   EXPECT_EQ(diagnosticStatusToInfluxLineProtocol(status, time), expected);

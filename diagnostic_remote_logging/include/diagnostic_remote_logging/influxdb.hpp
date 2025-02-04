@@ -39,10 +39,10 @@
 #ifndef DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_
 #define DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_
 
-#include "diagnostic_remote_logging/influx_line_protocol.hpp"
-
 #include <curl/curl.h>
 #include <string>
+
+#include "diagnostic_remote_logging/influx_line_protocol.hpp"
 
 #include "rclcpp/rclcpp.hpp"
 #include "diagnostic_msgs/msg/diagnostic_array.hpp"
@@ -50,22 +50,22 @@
 class InfluxDB : public rclcpp::Node
 {
 public:
-  explicit InfluxDB(const rclcpp::NodeOptions& opt);
+  explicit InfluxDB(const rclcpp::NodeOptions & opt);
   ~InfluxDB();
 
 private:
-  rclcpp::Subscription<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr  diag_sub_;
+  rclcpp::Subscription<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr diag_sub_;
   rclcpp::Subscription<diagnostic_msgs::msg::DiagnosticStatus>::SharedPtr top_level_sub_;
 
   std::string post_url_, influx_token_;
-  CURL*       curl_;
+  CURL * curl_;
 
-  void setupConnection(const std::string& telegraf_url);
+  void setupConnection(const std::string & telegraf_url);
 
   void diagnosticsCallback(const diagnostic_msgs::msg::DiagnosticArray::SharedPtr msg);
   void topLevelCallback(const diagnostic_msgs::msg::DiagnosticStatus::SharedPtr msg);
 
-  bool sendToInfluxDB(const std::string& data);
+  bool sendToInfluxDB(const std::string & data);
 };
 
 #endif  // DIAGNOSTIC_REMOTE_LOGGING__INFLUXDB_HPP_
